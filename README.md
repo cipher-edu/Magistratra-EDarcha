@@ -68,7 +68,15 @@ Brauzerda [http://localhost:3000](http://localhost:3000) manziliga kiring.
 
 ---
 
-## 📦 Versiya
+## 📦 Versiyalar va boshqaruv (Version Management)
 
-- **Versiya:** `1.0.0`
-- **Holati:** Ishga tushirishga tayyor (Production-ready initial release)
+Loyiha [SemVer](https://semver.org/lang/uz/) (Semantik versiyalash) va [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standartlariga asoslangan:
+
+- **Joriy versiya:** `1.1.0` (MINOR reliz — 3D taktil iconlar, Blueprint boshqaruv paneli, yangi Enterprise SVG auth arxitekturasi)
+- **O‘zgarishlar tarixi:** Barcha o‘zgarishlar [CHANGELOG.md](file:///D:/magister/CHANGELOG.md) faylida yuritiladi.
+- **Reliz quvuri (CI/CD):** `.github/workflows/release.yml` orqali har bir yangi `v*` tegi GitHub'da avtomatik reliz va arxiv yaratadi.
+- **Yangi versiya chiqarish qoidasi:**
+  - `PATCH` (1.1.1): Kichik xatolik va dizayn tuzatishlari.
+  - `MINOR` (1.2.0): Yangi modullar va funksiyalar qo‘shilganda.
+  - `MAJOR` (2.0.0): Katta arxitektura yoki orqaga mos kelmaydigan o‘zgarishlarda.
+
