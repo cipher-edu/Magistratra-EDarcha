@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: magister-postgres
+    environment:
+      POSTGRES_USER: magister
+      POSTGRES_PASSWORD: magister
+      POSTGRES_DB: magister
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U magister -d magister"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - magister_pg:/var/lib/postgresql/data
+
+volumes:
+  magister_pg:

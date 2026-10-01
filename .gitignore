@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+web/node_modules/
+
+# Next.js build output
+.next/
+web/.next/
+out/
+build/
+dist/
+
+# TypeScript
+*.tsbuildinfo
+web/tsconfig.tsbuildinfo
+next-env.d.ts
+
+# Environment variables
+.env
+.env*.local
+web/.env
+web/.env*.local
+
+# Database and uploaded files
+*.sqlite
+*.sqlite3
+*.db
+web/data/
+web/data/*.sqlite
+web/data/uploads/*
+!web/data/uploads/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
