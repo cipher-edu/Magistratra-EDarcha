@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { DecisionMark, type DecisionStatus } from "./DecisionMark";
-import { NAV_GLYPH, NavGlyph } from "./glyphs";
+import type { DecisionStatus } from "./DecisionMark";
+import { ThreeDIcon, routeTo3DKind } from "./ThreeDIcon";
+import { ThemeToggle } from "./ThemeToggle";
 import { LogoutButton } from "./LogoutButton";
 import { ViewBeacon } from "./ViewBeacon";
 import type { Role } from "@/lib/db";
@@ -86,10 +87,10 @@ export function Shell({
       <aside className={open ? "nav open" : "nav"}>
         <div className="nav-head">
           <Link href={role === "ADMIN" ? "/admin" : "/magistr"} className="brand" onClick={() => setOpen(false)}>
-            <span className="mark">M</span>
+            <ThreeDIcon kind="dashboard" size="nav" />
             <span>
               <strong>Magistratura</strong>
-              <small>ERP</small>
+              <small>E-DARCHA ERP</small>
             </span>
           </Link>
           <button className="nav-close" type="button" aria-label="Yopish" onClick={() => setOpen(false)}>
@@ -108,7 +109,7 @@ export function Shell({
                   data-active={active === link.href}
                   onClick={() => setOpen(false)}
                 >
-                  {link.mark ? <DecisionMark status={link.mark} /> : <NavGlyph d={NAV_GLYPH[link.href]} />}
+                  <ThreeDIcon kind={routeTo3DKind(link.href, link.mark)} size="nav" />
                   <span>{link.label}</span>
                 </Link>
               ))}
@@ -132,6 +133,7 @@ export function Shell({
               <strong>{name}</strong>
               <span>{role === "ADMIN" ? "Administrator" : "Magistr"}</span>
             </div>
+            <ThemeToggle />
             <LogoutButton />
           </div>
         </header>
@@ -141,13 +143,13 @@ export function Shell({
       <nav className="tabbar" aria-label="Pastki menyu">
         {tabs.map((tab) => (
           <Link key={tab.href} href={tab.href} data-active={active === tab.href}>
-            <NavGlyph d={NAV_GLYPH[tab.href]} />
-            {tab.label}
+            <ThreeDIcon kind={routeTo3DKind(tab.href)} size="compact" />
+            <span>{tab.label}</span>
           </Link>
         ))}
         <button type="button" onClick={() => setOpen(true)}>
-          <NavGlyph d="M4 7h16M4 12h16M4 17h16" />
-          Menyu
+          <ThreeDIcon kind="menu" size="compact" />
+          <span>Menyu</span>
         </button>
       </nav>
     </div>

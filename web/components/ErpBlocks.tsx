@@ -1,9 +1,222 @@
 import Link from "next/link";
 import { DecisionMark, isDecisionStatus } from "./DecisionMark";
 import { StatusBadge } from "./StatusBadge";
+import { ThreeDIcon } from "./ThreeDIcon";
 import type { DocumentRow } from "@/lib/db";
 import { buildHref, formatWhen, type FilterValues } from "@/lib/filters";
 import { STATUS_LABEL, STATUS_ORDER, TYPE_LABEL, type DocStatus, type DocType } from "@/lib/labels";
+
+export function AdminHeroKpis({
+  totalStudents,
+  activeStudents,
+  pendingDocs,
+  avgKpi = 78.4,
+}: {
+  totalStudents: number;
+  activeStudents: number;
+  pendingDocs: number;
+  avgKpi?: number;
+}) {
+  return (
+    <section className="admin-hero-grid">
+      <article className="admin-hero-card" style={{ "--card-accent": "#0284c7" } as React.CSSProperties}>
+        <div className="admin-hero-info">
+          <span className="admin-hero-label">Magistrantlar soni</span>
+          <strong className="admin-hero-val">{totalStudents}</strong>
+          <span className="admin-hero-badge" style={{ "--badge-color": "#0284c7", "--badge-bg": "#e0f2fe" } as React.CSSProperties}>
+            Barcha kurslar
+          </span>
+        </div>
+        <ThreeDIcon kind="students" size="banner" />
+      </article>
+
+      <article className="admin-hero-card" style={{ "--card-accent": "#16a34a" } as React.CSSProperties}>
+        <div className="admin-hero-info">
+          <span className="admin-hero-label">Faol foydalanuvchilar</span>
+          <strong className="admin-hero-val">{activeStudents}</strong>
+          <span className="admin-hero-badge" style={{ "--badge-color": "#16a34a", "--badge-bg": "#dcfce7" } as React.CSSProperties}>
+            Faol kabinetlar
+          </span>
+        </div>
+        <ThreeDIcon kind="profile" size="banner" />
+      </article>
+
+      <article className="admin-hero-card" style={{ "--card-accent": "#f59e0b" } as React.CSSProperties}>
+        <div className="admin-hero-info">
+          <span className="admin-hero-label">Navbatdagi arizalar</span>
+          <strong className="admin-hero-val">{pendingDocs}</strong>
+          <span className="admin-hero-badge" style={{ "--badge-color": "#d97706", "--badge-bg": "#fef3c7" } as React.CSSProperties}>
+            Qaror kutmoqda
+          </span>
+        </div>
+        <ThreeDIcon kind="requests" size="banner" />
+      </article>
+
+      <article className="admin-hero-card" style={{ "--card-accent": "#7c3aed" } as React.CSSProperties}>
+        <div className="admin-hero-info">
+          <span className="admin-hero-label">O‘rtacha KPI</span>
+          <strong className="admin-hero-val">{avgKpi}%</strong>
+          <span className="admin-hero-badge" style={{ "--badge-color": "#7c3aed", "--badge-bg": "#ede9fe" } as React.CSSProperties}>
+            Nizom 36-son
+          </span>
+        </div>
+        <ThreeDIcon kind="stats" size="banner" />
+      </article>
+    </section>
+  );
+}
+
+export function AdminAlertBanner({
+  pendingAccounts,
+  pendingDocs,
+}: {
+  pendingAccounts: number;
+  pendingDocs: number;
+}) {
+  if (pendingAccounts === 0 && pendingDocs === 0) return null;
+  return (
+    <div className="admin-alert-banner">
+      <div className="admin-alert-body">
+        <ThreeDIcon kind="requests" size="banner" />
+        <div>
+          <strong>Boshqaruv e’tiborini talab qiladigan jarayonlar</strong>
+          <p>
+            {pendingAccounts > 0 ? `${pendingAccounts} ta magistrant ro‘yxatdan o‘tish so‘rovi tasdiq kutilmoqda. ` : ""}
+            {pendingDocs > 0 ? `${pendingDocs} ta hujjat admin ko‘rib chiqishi uchun navbatda turibdi.` : ""}
+          </p>
+        </div>
+      </div>
+      <div className="filter-actions">
+        {pendingAccounts > 0 ? (
+          <Link className="btn" href="/admin/sorovlar">
+            So‘rovlarni tasdiqlash ({pendingAccounts})
+          </Link>
+        ) : null}
+        {pendingDocs > 0 ? (
+          <Link className="btn ghost" href="/admin/arizalar?status=SUBMITTED">
+            Navbatni ko‘rish ({pendingDocs})
+          </Link>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+export function BlueprintAnalyticsGrid() {
+  const kpiItems = [
+    { label: "O‘quv faoliyati", pct: 25, color: "#2563eb" },
+    { label: "Ilmiy faoliyat", pct: 25, color: "#7c3aed" },
+    { label: "Amaliyot monitoringi", pct: 20, color: "#059669" },
+    { label: "Ijtimoiy faoliyat", pct: 15, color: "#ea580c" },
+    { label: "Hisobotlar va rejalar", pct: 15, color: "#eab308" },
+  ];
+
+  const topStudents = [
+    { name: "Aliyev A.", score: 92.1, faculty: "Amaliy matematika" },
+    { name: "Karimova D.", score: 88.7, faculty: "Dasturiy injiniring" },
+    { name: "Abdullaev B.", score: 85.4, faculty: "Sun’iy intellekt" },
+  ];
+
+  return (
+    <section className="analytics-trio">
+      <article className="analytic-card">
+        <header>
+          <div>
+            <h3>KPI mezonlari taqsimoti</h3>
+            <span className="subtext">Nizom talablari bo‘yicha ulushlar</span>
+          </div>
+          <ThreeDIcon kind="stats" size="compact" />
+        </header>
+        <div className="kpi-distribution">
+          {kpiItems.map((item) => (
+            <div key={item.label} className="kpi-dist-item">
+              <span>{item.label}</span>
+              <div className="stage-card-bar">
+                <b className="stage-card-fill" style={{ width: `${item.pct * 4}%`, backgroundColor: item.color }} />
+              </div>
+              <strong style={{ color: item.color }}>{item.pct}%</strong>
+            </div>
+          ))}
+        </div>
+      </article>
+
+      <article className="analytic-card">
+        <header>
+          <div>
+            <h3>BMI tayyorgarligi & Ilmiy nashrlar</h3>
+            <span className="subtext">Bitiruv malakaviy ishi progressi</span>
+          </div>
+          <ThreeDIcon kind="documents" size="compact" />
+        </header>
+        <div className="bmi-meter-box">
+          <div className="bmi-circle">
+            <svg viewBox="0 0 36 36">
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="var(--track)"
+                strokeWidth="3.2"
+              />
+              <path
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="var(--accent)"
+                strokeWidth="3.2"
+                strokeDasharray="68, 100"
+                strokeLinecap="round"
+              />
+            </svg>
+            <span className="bmi-circle-val">68%</span>
+          </div>
+          <div>
+            <strong>O‘rtacha tayyorgarlik</strong>
+            <p className="hint" style={{ margin: "2px 0 8px" }}>
+              Nizom talablariga mos ilmiy maqolalar:
+            </p>
+            <div className="pub-pills">
+              <div className="pub-pill">
+                <span>Scopus</span>
+                <strong>95</strong>
+              </div>
+              <div className="pub-pill">
+                <span>WoS</span>
+                <strong>68</strong>
+              </div>
+              <div className="pub-pill">
+                <span>OAK</span>
+                <strong>82</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article className="analytic-card">
+        <header>
+          <div>
+            <h3>Eng faol magistrantlar</h3>
+            <span className="subtext">TOP 3 reyting ko‘rsatkichi</span>
+          </div>
+          <ThreeDIcon kind="students" size="compact" />
+        </header>
+        <ul className="top-students-list">
+          {topStudents.map((st, idx) => (
+            <li key={st.name} className="top-student-item">
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span className="top-student-badge">{idx + 1}</span>
+                <div>
+                  <strong style={{ display: "block", fontSize: "13px" }}>{st.name}</strong>
+                  <span style={{ fontSize: "11px", color: "var(--muted)" }}>{st.faculty}</span>
+                </div>
+              </div>
+              <span className="top-student-score">{st.score}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </section>
+  );
+}
 
 export function FilterFold({ applied, children }: { applied: boolean; children: React.ReactNode }) {
   return (
@@ -139,7 +352,6 @@ export function StageStrip({
   rows,
   base,
   values,
-  showMarks = false,
 }: {
   rows: DocumentRow[];
   base: string;
@@ -148,7 +360,7 @@ export function StageStrip({
 }) {
   const total = rows.length || 1;
   return (
-    <section className="stages">
+    <section className="stages-modern">
       {STATUS_ORDER.map((status) => {
         const count = rows.filter((row) => row.status === status).length;
         const percent = Math.round((count / total) * 100);
@@ -157,18 +369,36 @@ export function StageStrip({
           <Link
             key={status}
             href={buildHref(base, values, { status: active ? "" : status })}
-            className={active ? "stage on" : "stage"}
+            className={active ? "stage-card on" : "stage-card"}
             data-status={status}
           >
-            {showMarks ? (
-              isDecisionStatus(status) ? <DecisionMark status={status} /> : <span className="d3 d3-gap" aria-hidden="true" />
-            ) : null}
-            <span>{STATUS_LABEL[status]}</span>
-            <strong>{count}</strong>
-            <i>
-              <b style={{ width: `${percent}%` }} />
-            </i>
-            <em>{percent}%</em>
+            <div className="stage-card-head">
+              <span className="stage-card-title">{STATUS_LABEL[status]}</span>
+              <ThreeDIcon kind={status} size="compact" />
+            </div>
+            <div className="stage-card-count">{count}</div>
+            <div className="stage-card-bar">
+              <b
+                className="stage-card-fill"
+                style={{
+                  width: `${percent}%`,
+                  backgroundColor:
+                    status === "APPROVED"
+                      ? "var(--ok)"
+                      : status === "REJECTED"
+                      ? "var(--bad)"
+                      : status === "REVISION"
+                      ? "var(--revision)"
+                      : status === "DRAFT"
+                      ? "var(--draft)"
+                      : "var(--wait)",
+                }}
+              />
+            </div>
+            <div className="stage-card-foot">
+              <span>Ulush:</span>
+              <strong>{percent}%</strong>
+            </div>
           </Link>
         );
       })}
