@@ -68,7 +68,26 @@ export function ArizaHistory({
               <small>{formatWhen(event.review.created_at)}</small>
             </header>
             <p>{event.review.comment}</p>
-            <small>{event.review.admin_name}</small>
+            {event.review.governance_ref ? (
+              <div className="governance-seal" style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                margin: "6px 0 4px",
+                padding: "4px 8px",
+                background: "var(--bg-subtle, rgba(2, 132, 199, 0.08))",
+                border: "1px solid var(--border-subtle, rgba(2, 132, 199, 0.2))",
+                borderRadius: "6px",
+                fontSize: "12px",
+                color: "var(--accent, #0284c7)"
+              }}>
+                <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+                  <path d="M10 2L3 6v4c0 5 3.5 8 7 9 3.5-1 7-4 7-9V6l-7-4z" />
+                </svg>
+                <span>Yuridik asos: <strong>{event.review.governance_ref}</strong></span>
+              </div>
+            ) : null}
+            <small style={{ display: "block" }}>{event.review.admin_name}</small>
           </article>
         ),
       )}

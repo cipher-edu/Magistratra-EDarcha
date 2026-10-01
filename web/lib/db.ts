@@ -62,6 +62,7 @@ export type ReviewRow = {
   admin_name: string;
   action: ReviewAction;
   comment: string;
+  governance_ref?: string | null;
   created_at: string;
 };
 
@@ -139,17 +140,19 @@ function seedCatalog(db: DatabaseSync, studentHash: string) {
     ["ccccccc7-cccc-4ccc-8ccc-ccccccccccc7", "77777777-7777-4777-8777-777777777777", "REPORT", "Sentabr moliyaviy hisobot", "Uchta manba va seminar bayonnomasi ilova qilingan.", "APPROVED", "2025-10-08T12:00:00.000Z"],
     ["ccccccc8-cccc-4ccc-8ccc-ccccccccccc8", "77777777-7777-4777-8777-777777777777", "DISSERTATION", "Byudjet nazorati mavzusi", "Mavzu taklifi va dolzarblik yozilgan.", "SUBMITTED", "2025-11-21T08:40:00.000Z"],
     ["ccccccc9-cccc-4ccc-8ccc-ccccccccccc9", "77777777-7777-4777-8777-777777777777", "SOCIAL", "Ilmiy to‘garak", "Noyabr oyidagi to‘garak qatnashuvi, qoralama.", "DRAFT", "2025-11-22T08:40:00.000Z"],
+    ["ccccccca-cccc-4ccc-8ccc-ccccccccccc0", "77777777-7777-4777-8777-777777777777", "ARTICLE", "Scopus: Moliya tizimida ekonometrik modellashtirish", "[ILMIY NASHR MA’LUMOTLARI]\nBaza: Scopus\nJurnal / To‘plam: Finance Research Letters\nJild / Son / Bet: 2025-yil, Vol. 56, 210-218-betlar\nDOI / Havola: https://doi.org/10.1016/j.frl.2025.104\nHammualliflar: dots. B. Qodirov", "APPROVED", "2025-11-05T10:00:00.000Z"],
   ];
   for (const doc of docs) insertDoc.run(doc[0], doc[1], doc[2], doc[3], doc[4], doc[5], doc[6], doc[6]);
 
   const insertReview = db.prepare(`
-    INSERT OR IGNORE INTO reviews (id, document_id, admin_id, action, comment, created_at)
-    VALUES (?, ?, '11111111-1111-4111-8111-111111111111', ?, ?, ?)
+    INSERT OR IGNORE INTO reviews (id, document_id, admin_id, action, comment, governance_ref, created_at)
+    VALUES (?, ?, '11111111-1111-4111-8111-111111111111', ?, ?, ?, ?)
   `);
-  insertReview.run("ddddddd1-dddd-4ddd-8ddd-ddddddddddd1", "ccccccc1-cccc-4ccc-8ccc-ccccccccccc1", "APPROVE", "Beshta bo‘lim muddati bilan yozilgan. Kalendar reja qabul qilindi.", "2025-10-04T09:30:00.000Z");
-  insertReview.run("ddddddd2-dddd-4ddd-8ddd-ddddddddddd2", "ccccccc4-cccc-4ccc-8ccc-ccccccccccc4", "REJECT", "Tasdiqlovchi sertifikat yo‘q. Hujjatni rad etaman.", "2025-10-20T10:20:00.000Z");
-  insertReview.run("ddddddd3-dddd-4ddd-8ddd-ddddddddddd3", "ccccccc6-cccc-4ccc-8ccc-ccccccccccc6", "REVISION", "Dissertatsiya bosqichiga aniq oy yozib, qayta yuboring.", "2025-10-28T16:40:00.000Z");
-  insertReview.run("ddddddd4-dddd-4ddd-8ddd-ddddddddddd4", "ccccccc7-cccc-4ccc-8ccc-ccccccccccc7", "APPROVE", "Manbalar va seminar bayonnomasi yetarli. Hisobot qabul qilindi.", "2025-10-08T12:30:00.000Z");
+  insertReview.run("ddddddd1-dddd-4ddd-8ddd-ddddddddddd1", "ccccccc1-cccc-4ccc-8ccc-ccccccccccc1", "APPROVE", "Beshta bo‘lim muddati bilan yozilgan. Kalendar reja qabul qilindi.", "Kafedra bayonnomasi №2, 02.10.2025", "2025-10-04T09:30:00.000Z");
+  insertReview.run("ddddddd2-dddd-4ddd-8ddd-ddddddddddd2", "ccccccc4-cccc-4ccc-8ccc-ccccccccccc4", "REJECT", "Tasdiqlovchi sertifikat yo‘q. Hujjatni rad etaman.", null, "2025-10-20T10:20:00.000Z");
+  insertReview.run("ddddddd3-dddd-4ddd-8ddd-ddddddddddd3", "ccccccc6-cccc-4ccc-8ccc-ccccccccccc6", "REVISION", "Dissertatsiya bosqichiga aniq oy yozib, qayta yuboring.", null, "2025-10-28T16:40:00.000Z");
+  insertReview.run("ddddddd4-dddd-4ddd-8ddd-ddddddddddd4", "ccccccc7-cccc-4ccc-8ccc-ccccccccccc7", "APPROVE", "Manbalar va seminar bayonnomasi yetarli. Hisobot qabul qilindi.", "Kafedra bayonnomasi №3, 08.10.2025", "2025-10-08T12:30:00.000Z");
+  insertReview.run("ddddddd5-dddd-4ddd-8ddd-ddddddddddd5", "ccccccca-cccc-4ccc-8ccc-ccccccccccc0", "APPROVE", "Xalqaro Scopus bazasida indekslangan ilmiy maqola to‘liq tasdiqlandi.", "Kafedra bayonnomasi №4, 05.11.2025", "2025-11-05T10:30:00.000Z");
 }
 
 function migrate() {
@@ -259,6 +262,13 @@ function migrate() {
     db.exec(`ALTER TABLE users ADD COLUMN status_note text`);
   }
 
+  const reviewColumns = new Set(
+    (db.prepare(`PRAGMA table_info(reviews)`).all() as Array<{ name: string }>).map((column) => column.name),
+  );
+  if (!reviewColumns.has("governance_ref")) {
+    db.exec(`ALTER TABLE reviews ADD COLUMN governance_ref text`);
+  }
+
   const now = new Date().toISOString();
   const adminHash = bcrypt.hashSync("Admin123!", 10);
   const studentHash = bcrypt.hashSync("Magistr123!", 10);
@@ -328,10 +338,20 @@ function migrate() {
     now,
     now,
   );
+  insertDoc.run(
+    "aaaaaaa6-aaaa-4aaa-8aaa-aaaaaaaaaaa6",
+    "22222222-2222-4222-8222-222222222222",
+    "ARTICLE",
+    "Scopus: Raqamli iqtisodiyotda intellektual boshqaruv tizimlari",
+    "[ILMIY NASHR MA’LUMOTLARI]\nBaza: Scopus\nJurnal / To‘plam: International Journal of Information Management\nJild / Son / Bet: 2025-yil, Vol. 48, 112-124-betlar\nDOI / Havola: https://doi.org/10.1016/j.ijinfomgt.2025.102\nHammualliflar: dots. A. Karimov",
+    "APPROVED",
+    now,
+    now,
+  );
 
   const insertReview = db.prepare(`
-    INSERT INTO reviews (id, document_id, admin_id, action, comment, created_at)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO reviews (id, document_id, admin_id, action, comment, governance_ref, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `);
   insertReview.run(
     "bbbbbbb1-bbbb-4bbb-8bbb-bbbbbbbbbbb1",
@@ -339,6 +359,7 @@ function migrate() {
     "11111111-1111-4111-8111-111111111111",
     "REVISION",
     "Oylik hisobotda 2-band natijasi yozilmagan. Shu bandni to‘ldirib, qayta yuboring.",
+    null,
     now,
   );
   insertReview.run(
@@ -347,6 +368,16 @@ function migrate() {
     "11111111-1111-4111-8111-111111111111",
     "APPROVE",
     "Konferensiya sertifikati qabul qilindi. Ijtimoiy faoliyat tasdiqlandi.",
+    "Kafedra bayonnomasi №1, 15.09.2025",
+    now,
+  );
+  insertReview.run(
+    "bbbbbbb3-bbbb-4bbb-8bbb-bbbbbbbbbbb3",
+    "aaaaaaa6-aaaa-4aaa-8aaa-aaaaaaaaaaa6",
+    "11111111-1111-4111-8111-111111111111",
+    "APPROVE",
+    "Xalqaro Scopus bazasida indekslangan ilmiy maqola Nizom 36-son bo‘yicha to‘liq tasdiqlandi.",
+    "Kafedra bayonnomasi №3, 14.10.2025",
     now,
   );
   }
@@ -923,7 +954,7 @@ export async function listRecentReviews() {
   return database()
     .prepare(`
       SELECT r.id, r.document_id, r.admin_id, a.full_name AS admin_name,
-             r.action, r.comment, r.created_at, d.title, u.full_name AS owner_name
+             r.action, r.comment, r.governance_ref, r.created_at, d.title, u.full_name AS owner_name
       FROM reviews r
       JOIN users a ON a.id = r.admin_id
       JOIN documents d ON d.id = r.document_id
@@ -943,7 +974,7 @@ export async function listReviews(documentId: string) {
   await initDb();
   return database()
     .prepare(`
-      SELECT r.id, r.document_id, r.admin_id, a.full_name AS admin_name, r.action, r.comment, r.created_at
+      SELECT r.id, r.document_id, r.admin_id, a.full_name AS admin_name, r.action, r.comment, r.governance_ref, r.created_at
       FROM reviews r
       JOIN users a ON a.id = r.admin_id
       WHERE r.document_id = ?
@@ -1002,9 +1033,11 @@ export async function reviewDocument(input: {
   adminId: string;
   action: ReviewAction;
   comment: string;
+  governanceRef?: string;
 }) {
   await initDb();
   const comment = input.comment.trim();
+  const governanceRef = input.governanceRef?.trim() || null;
   if (comment.length < 3) throw new ReviewError("Qaror faqat komment bilan saqlanadi.");
   if (!["APPROVE", "REJECT", "REVISION"].includes(input.action)) throw new ReviewError("Noto‘g‘ri qaror.");
   const status = input.action === "APPROVE" ? "APPROVED" : input.action === "REJECT" ? "REJECTED" : "REVISION";
@@ -1016,12 +1049,13 @@ export async function reviewDocument(input: {
     if (current.status !== "SUBMITTED" && current.status !== "IN_REVIEW") {
       throw new ReviewError("Bu hujjat qaror kutmayapti.");
     }
-    db.prepare(`INSERT INTO reviews (id, document_id, admin_id, action, comment, created_at) VALUES (?, ?, ?, ?, ?, ?)`).run(
+    db.prepare(`INSERT INTO reviews (id, document_id, admin_id, action, comment, governance_ref, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
       crypto.randomUUID(),
       input.documentId,
       input.adminId,
       input.action,
       comment,
+      governanceRef,
       new Date().toISOString(),
     );
     db.prepare(`UPDATE documents SET status = ?, updated_at = ? WHERE id = ?`).run(status, new Date().toISOString(), input.documentId);

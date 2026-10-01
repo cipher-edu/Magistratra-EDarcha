@@ -13,6 +13,7 @@ const ACTIONS: { action: ReviewAction; label: string; className: string }[] = [
 export function ReviewForm({ documentId }: { documentId: string }) {
   const router = useRouter();
   const [comment, setComment] = useState("");
+  const [governanceRef, setGovernanceRef] = useState("");
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const ready = comment.trim().length >= 3 && !pending;
@@ -27,7 +28,7 @@ export function ReviewForm({ documentId }: { documentId: string }) {
     const response = await fetch(`/api/documents/${documentId}/review`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action, comment: comment.trim() }),
+      body: JSON.stringify({ action, comment: comment.trim(), governanceRef: governanceRef.trim() || undefined }),
     });
     const data = (await response.json().catch(() => ({}))) as { error?: string };
     setPending(false);
@@ -36,6 +37,7 @@ export function ReviewForm({ documentId }: { documentId: string }) {
       return;
     }
     setComment("");
+    setGovernanceRef("");
     router.refresh();
   }
 
@@ -57,6 +59,17 @@ export function ReviewForm({ documentId }: { documentId: string }) {
           placeholder="Nima uchun qabul qilindi, rad etildi yoki qayta yuborildi"
           required
           minLength={3}
+        />
+      </div>
+      <div className="field">
+        <label htmlFor="govRef">
+          Yuridik asos (Bayonnoma / Buyruq) <span style={{ fontSize: "12px", color: "var(--muted)", fontWeight: "normal" }}>(Ixtiyoriy)</span>
+        </label>
+        <input
+          id="govRef"
+          value={governanceRef}
+          onChange={(event) => setGovernanceRef(event.target.value)}
+          placeholder="Masalan: Kafedra bayonnomasi №4, 15.10.2025 yoki Buyruq №28/M"
         />
       </div>
       <div className="row">

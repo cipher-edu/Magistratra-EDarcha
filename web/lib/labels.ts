@@ -12,6 +12,7 @@ export const TYPE_LABEL = {
   PLAN: "Kalendar ish rejasi",
   REPORT: "Oylik hisobot",
   DISSERTATION: "Dissertatsiya",
+  ARTICLE: "Ilmiy maqola va tezis",
   PRACTICE: "Amaliyot",
   SOCIAL: "Ijtimoiy faoliyat",
 } as const;
@@ -24,8 +25,17 @@ export const ACTION_LABEL = {
 
 export type DocStatus = keyof typeof STATUS_LABEL;
 export type DocType = keyof typeof TYPE_LABEL;
-export const SUBMIT_TYPES = ["PLAN", "REPORT", "DISSERTATION", "PRACTICE", "SOCIAL"] as const satisfies readonly DocType[];
+export const SUBMIT_TYPES = ["PLAN", "REPORT", "DISSERTATION", "ARTICLE", "PRACTICE", "SOCIAL"] as const satisfies readonly DocType[];
 export type ReviewAction = keyof typeof ACTION_LABEL;
+
+export const PUBLICATION_DATABASES = [
+  "Scopus",
+  "Web of Science",
+  "OAK ro‘yxatidagi xalqaro jurnal",
+  "OAK ro‘yxatidagi respublika jurnali",
+  "Xalqaro ilmiy konferensiya",
+  "Respublika ilmiy anjumani",
+] as const;
 
 export const STATUS_ORDER: DocStatus[] = ["DRAFT", "SUBMITTED", "IN_REVIEW", "REVISION", "APPROVED", "REJECTED"];
 

@@ -102,7 +102,15 @@ export function AdminAlertBanner({
   );
 }
 
-export function BlueprintAnalyticsGrid() {
+export function BlueprintAnalyticsGrid({
+  scopusCount = 95,
+  wosCount = 68,
+  oakCount = 82,
+}: {
+  scopusCount?: number;
+  wosCount?: number;
+  oakCount?: number;
+} = {}) {
   const kpiItems = [
     { label: "O‘quv faoliyati", pct: 25, color: "#2563eb" },
     { label: "Ilmiy faoliyat", pct: 25, color: "#7c3aed" },
@@ -176,15 +184,15 @@ export function BlueprintAnalyticsGrid() {
             <div className="pub-pills">
               <div className="pub-pill">
                 <span>Scopus</span>
-                <strong>95</strong>
+                <strong>{scopusCount}</strong>
               </div>
               <div className="pub-pill">
                 <span>WoS</span>
-                <strong>68</strong>
+                <strong>{wosCount}</strong>
               </div>
               <div className="pub-pill">
                 <span>OAK</span>
-                <strong>82</strong>
+                <strong>{oakCount}</strong>
               </div>
             </div>
           </div>
@@ -480,8 +488,11 @@ export function DocTable({
               {showStudent ? <td>{doc.owner_name}</td> : null}
               {showStudent ? <td>{doc.faculty}</td> : null}
               {showStudent ? <td>{doc.course}-kurs · {doc.funding}</td> : null}
-              <td>
-                <Link href={hrefFor(doc.id)}>{doc.title}</Link>
+              <td style={{ verticalAlign: "middle" }}>
+                <Link href={hrefFor(doc.id)} style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontWeight: 500 }}>
+                  <ThreeDIcon kind={doc.type === "ARTICLE" ? "article" : "documents"} size="compact" />
+                  <span>{doc.title}</span>
+                </Link>
               </td>
               <td>{TYPE_LABEL[doc.type as DocType] ?? doc.type}</td>
               <td>

@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { DocTable, Kpis, StageStrip } from "@/components/ErpBlocks";
+import { NizomMonitoringCard } from "@/components/NizomMonitoringCard";
 import { Shell } from "@/components/Shell";
 import { requireUser } from "@/lib/auth";
 import { findUserById, queryDocuments } from "@/lib/db";
 import { readFilters } from "@/lib/filters";
+import { TYPE_LABEL } from "@/lib/labels";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +38,7 @@ export default async function StudentProfilePage({
           <div><span>Kurs</span><strong>{student.course}-kurs · {student.funding}</strong></div>
         </div>
       </article>
+      <NizomMonitoringCard course={student.course} documents={owned} />
       <Kpis rows={stageRows} />
       <StageStrip rows={stageRows} base={base} values={values} />
       <form className="filters student" method="get" action={base} key={`${values.status}|${values.type}`}>
@@ -55,11 +58,11 @@ export default async function StudentProfilePage({
           Hujjat turi
           <select name="type" defaultValue={values.type}>
             <option value="">Barcha turlar</option>
-            <option value="PLAN">Kalendar ish rejasi</option>
-            <option value="REPORT">Oylik hisobot</option>
-            <option value="DISSERTATION">Dissertatsiya</option>
-            <option value="PRACTICE">Amaliyot</option>
-            <option value="SOCIAL">Ijtimoiy faoliyat</option>
+            {Object.entries(TYPE_LABEL).map(([val, label]) => (
+              <option key={val} value={val}>
+                {label}
+              </option>
+            ))}
           </select>
         </label>
         <div className="filter-actions">

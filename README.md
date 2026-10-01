@@ -1,4 +1,4 @@
-# Magistratura - E-Darcha (v1.0.0)
+# Magistratura - E-Darcha (v1.2.0)
 
 Oliy ta’lim muassasasining magistratura bo‘limi faoliyatini yagona platformada yuritish, monitoring qilish va boshqarish tizimi.
 
@@ -72,7 +72,7 @@ Brauzerda [http://localhost:3000](http://localhost:3000) manziliga kiring.
 
 Loyiha [SemVer](https://semver.org/lang/uz/) (Semantik versiyalash) va [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) standartlariga asoslangan:
 
-- **Joriy versiya:** `1.1.0` (MINOR reliz — 3D taktil iconlar, Blueprint boshqaruv paneli, yangi Enterprise SVG auth arxitekturasi)
+- **Joriy versiya:** `1.2.0` (MINOR reliz — Ilmiy maqolalar moduli, Nizom 36-son monitoringi, yuridik bayonnoma tasdiqlari va 3D gliflar)
 - **O‘zgarishlar tarixi:** Barcha o‘zgarishlar [CHANGELOG.md](file:///D:/magister/CHANGELOG.md) faylida yuritiladi.
 - **Reliz quvuri (CI/CD):** `.github/workflows/release.yml` orqali har bir yangi `v*` tegi GitHub'da avtomatik reliz va arxiv yaratadi.
 - **Yangi versiya chiqarish qoidasi:**

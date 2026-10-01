@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Breakdown, DocTable, FilterForm, Kpis, StageStrip } from "@/components/ErpBlocks";
+import { NizomMonitoringCard } from "@/components/NizomMonitoringCard";
 import { Shell } from "@/components/Shell";
 import { requireUser } from "@/lib/auth";
 import { queryDocuments } from "@/lib/db";
@@ -34,6 +35,7 @@ export default async function StudentDashboardPage({
           <Link className="btn" href="/magistr/hujjat/yangi">Ariza yuborish</Link>
         </div>
       </article>
+      <NizomMonitoringCard course={user.course} documents={owned} isStudent />
       <Kpis rows={stageRows} />
       <StageStrip rows={stageRows} base="/magistr" values={values} />
       <Breakdown

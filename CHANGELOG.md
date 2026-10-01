@@ -4,6 +4,29 @@ Barcha rasmiy versiyalar va ulardagi o‘zgarishlar ushbu hujjatda [Keep a Chang
 
 ---
 
+## [1.2.0] - 2026-10-02
+
+### 🚀 Yangiliklar (Added)
+- **Ilmiy maqolalar va nashrlar moduli (ARTICLE):**
+  - Vazirlar Mahkamasining 36-son Nizomi (2.7, 4.4, 4.8-bandlari) talablariga muvofiq ilmiy nashrlar hujjat turi sifatida to‘liq joriy etildi.
+  - Maxsus metadatalar kiritish shakli: Indekslangan baza (`Scopus`, `Web of Science`, `OAK xalqaro/respublika jurnali`, `Xalqaro/respublika anjumani`), Jurnal yoki to‘plam nomi, Jild/Son/Betlar, DOI / elektron havola hamda hammualliflar ro‘yxati.
+- **Yuridik Governance (Bayonnoma va Buyruq tasdiqlari):**
+  - Hujjatlar bo‘yicha administrator qarori qabul qilinganda rasmiy yuridik hujjat ma’lumotlarini biriktirish imkoniyati (Kafedra bayonnomasi, Ilmiy kengash qarori yoki Rektorat buyrug‘i).
+  - Arizalar tarixida va talaba profilida rasmiy tasdiq yozuvi va yuridik gerb/muhr ko‘rinishidagi vizual indikator.
+- **Nizom 36-son monitoring kartasi (`NizomMonitoringCard`):**
+  - Talaba va admin kabinetlarida kurs bo‘yicha majburiy mezonlar (1-kursda kamida 1 ta maqola/tezis, tasdiqlangan reja, mavzu; 2-kursda kamida 2 ta maqola/tezis, dastlabki himoya tayyorgarligi, amaliyot) monitoringi.
+  - Jonli muvofiqlik darajasi (foizda) va yetishmayotgan hujjatlarni to‘g‘ridan-to‘g‘ri yuborish havolalari.
+- **Yangi 3D Taktil Izometrik Iconlar:**
+  - `ThreeDIcon` tizimiga ilmiy nashrlar uchun `article` hamda yuridik asoslar uchun `governance` piktogrammalari va ularning CSS rang mavzulari qo‘shildi.
+  - Reestr jadvallarida hujjat nomlari oldiga 3D tur belgilari kiritildi.
+
+### 🎨 O‘zgarishlar va Yaxshilanishlar (Changed)
+- Boshqaruv panelidagi Blueprint tahlil blokida ilmiy nashrlar soni (Scopus, WoS, OAK) dinamik hisoblash parametrlariga ulandi.
+- Talaba profilidagi filtrlash shaklida hujjat turlari dinamik katalogdan olinadigan qilindi.
+- `reviews` ma’lumotlar bazasi jadvaliga `governance_ref` maydoni qo‘shildi va avtomatik migratsiya o‘rnatildi.
+
+---
+
 ## [1.1.0] - 2026-10-02
 
 ### 🚀 Yangiliklar (Added)

@@ -1418,6 +1418,22 @@ details.filter-fold > summary::-webkit-details-marker { display: none; }
   --i3d-edge: #7f1d1d;
 }
 
+.i3d-wrap[data-kind="article"] {
+  --i3d-light: #fbcfe8;
+  --i3d-main: #db2777;
+  --i3d-dark: #be185d;
+  --i3d-side: #9d174d;
+  --i3d-edge: #831843;
+}
+
+.i3d-wrap[data-kind="governance"] {
+  --i3d-light: #fed7aa;
+  --i3d-main: #ea580c;
+  --i3d-dark: #c2410c;
+  --i3d-side: #9a3412;
+  --i3d-edge: #7c2d12;
+}
+
 /* ==========================================================================
    ENHANCED NAVBAR & CONTROL PANEL (ERP DASHBOARD) STYLING
    ========================================================================== */

@@ -10,9 +10,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Faqat admin qaror beradi." }, { status: 403 });
   }
   const { id } = await context.params;
-  const body = (await request.json().catch(() => null)) as { action?: ReviewAction; comment?: string } | null;
+  const body = (await request.json().catch(() => null)) as { action?: ReviewAction; comment?: string; governanceRef?: string } | null;
   const comment = body?.comment ?? "";
   const action = body?.action;
+  const governanceRef = body?.governanceRef;
   if (comment.trim().length < 3) {
     return NextResponse.json(
       { error: "Qaror faqat komment bilan saqlanadi." },
@@ -23,7 +24,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ error: "Noto‘g‘ri qaror." }, { status: 400 });
   }
   try {
-    await reviewDocument({ documentId: id, adminId: user.id, action, comment });
+    await reviewDocument({ documentId: id, adminId: user.id, action, comment, governanceRef });
   } catch (error) {
     const message = error instanceof ReviewError ? error.message : "Saqlanmadi.";
     return NextResponse.json({ error: message }, { status: 400 });

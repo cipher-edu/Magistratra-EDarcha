@@ -13,6 +13,8 @@ export type Icon3DKind =
   | "cabinet"
   | "new_doc"
   | "menu"
+  | "article"
+  | "governance"
   | "DRAFT"
   | DecisionStatus;
 
@@ -153,6 +155,18 @@ function getTopGlyph(kind: Icon3DKind) {
       return (
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="i3d-svg">
           <path d="M5 5L15 15M15 5L5 15" />
+        </svg>
+      );
+    case "article":
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="i3d-svg">
+          <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
+        </svg>
+      );
+    case "governance":
+      return (
+        <svg viewBox="0 0 20 20" fill="currentColor" className="i3d-svg">
+          <path fillRule="evenodd" d="M10 2l-7 3.111v4.445c0 4.632 3.033 8.977 7 10.444 3.967-1.467 7-5.812 7-10.444V5.111L10 2zm3.707 6.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
         </svg>
       );
   }
