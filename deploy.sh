@@ -2,14 +2,25 @@
 set -e
 
 echo "=== 1. Node.js muhitini sozlash ==="
-for p in /opt/alt/alt-nodejs*/root/usr/bin /opt/cpanel/ea-nodejs*/bin "$HOME"/nodevenv/*/bin "$HOME"/.nvm/versions/node/*/bin; do
-    if [ -d "$p" ]; then
-        export PATH="$p:$PATH"
+NODE_BIN=""
+for v in 22 20 18; do
+    if [ -d "/opt/alt/alt-nodejs$v/root/usr/bin" ]; then
+        NODE_BIN="/opt/alt/alt-nodejs$v/root/usr/bin"
+        break
+    elif [ -d "/opt/cpanel/ea-nodejs$v/bin" ]; then
+        NODE_BIN="/opt/cpanel/ea-nodejs$v/bin"
+        break
     fi
 done
 
-echo "Node versiyasi: $(node -v 2>/dev/null || echo 'Mavjud emas')"
-echo "NPM versiyasi: $(npm -v 2>/dev/null || echo 'Mavjud emas')"
+if [ -n "$NODE_BIN" ]; then
+    export PATH="$NODE_BIN:$PATH"
+    echo "Topilgan zamonaviy Node yo'li: $NODE_BIN"
+fi
+
+NODE_VER=$(node -v 2>/dev/null || echo "mavjud emas")
+echo "Faol Node versiyasi: $NODE_VER"
+echo "Faol NPM versiyasi: $(npm -v 2>/dev/null || echo 'mavjud emas')"
 
 echo "=== 2. Magistratra-EDarcha/web sozlamalari ==="
 cd "$(dirname "$0")/web"
@@ -19,7 +30,17 @@ if [ ! -f .env ]; then
     echo ".env fayli yaratildi."
 fi
 
-echo "=== 3. Paketlarni o'rnatish ==="
+# Eski Node 9 dan qolgan noto'g'ri paketlar bo'lsa tozalash
+if [ -d "node_modules" ] && [ -f "node_modules/next/dist/bin/next" ]; then
+    NODE_MAJOR=$(node -e 'console.log(process.versions.node.split(".")[0])' 2>/dev/null || echo "0")
+    if [ "$NODE_MAJOR" -lt 18 ]; then
+        echo "XATOLIK: Node.js versiyasi kamida v18 bo'lishi kerak! Hozirgi: $NODE_VER"
+        exit 1
+    fi
+fi
+
+echo "=== 3. Paketlarni toza o'rnatish ==="
+rm -rf node_modules package-lock.json
 npm install
 
 echo "=== 4. Loyihani yig'ish (build) ==="
