@@ -2,11 +2,11 @@
 set -e
 
 echo "=== 1. Node.js muhitini sozlash ==="
-NODE_DIR=$(ls -d /opt/alt/alt-nodejs* 2>/dev/null | sort -V | tail -n 1)
-if [ -n "$NODE_DIR" ]; then
-    export PATH="$NODE_DIR/root/usr/bin:$PATH"
-    echo "Topilgan Node yo'li: $NODE_DIR/root/usr/bin"
-fi
+for p in /opt/alt/alt-nodejs*/root/usr/bin /opt/cpanel/ea-nodejs*/bin "$HOME"/nodevenv/*/bin "$HOME"/.nvm/versions/node/*/bin; do
+    if [ -d "$p" ]; then
+        export PATH="$p:$PATH"
+    fi
+done
 
 echo "Node versiyasi: $(node -v 2>/dev/null || echo 'Mavjud emas')"
 echo "NPM versiyasi: $(npm -v 2>/dev/null || echo 'Mavjud emas')"
