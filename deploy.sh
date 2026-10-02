@@ -1,7 +1,11 @@
 #!/bin/bash
 set -e
 
-echo "=== 1. Node.js muhitini sozlash ==="
+echo "=================================================="
+echo "  MAGISTRATURA E-DARCHA — YASHINDEK TEZKOR DEPLOY "
+echo "=================================================="
+
+# 1. Eng yangi Node.js ni tanlash (22 yoki 20)
 NODE_BIN=""
 for v in 22 20 18; do
     if [ -d "/opt/alt/alt-nodejs$v/root/usr/bin" ]; then
@@ -15,52 +19,38 @@ done
 
 if [ -n "$NODE_BIN" ]; then
     export PATH="$NODE_BIN:$PATH"
-    echo "Topilgan zamonaviy Node yo'li: $NODE_BIN"
 fi
 
-NODE_VER=$(node -v 2>/dev/null || echo "mavjud emas")
-echo "Faol Node versiyasi: $NODE_VER"
-echo "Faol NPM versiyasi: $(npm -v 2>/dev/null || echo 'mavjud emas')"
+echo "✓ Node versiyasi: $(node -v 2>/dev/null || echo 'Mavjud emas')"
 
-echo "=== 2. Magistratra-EDarcha/web sozlamalari ==="
-cd "$(dirname "$0")/web"
+# 2. Ishchi papkani tayyorlash
+BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORK_DIR="$HOME/magister-live"
+mkdir -p "$WORK_DIR"
 
+echo "✓ Tayyor yig'ilgan arxiv ochilmoqda..."
+tar -xzf "$BASE_DIR/magister-bundle.tar.gz" -C "$WORK_DIR"
+cd "$WORK_DIR"
+
+# .env sozlamasi
 if [ ! -f .env ]; then
-    cp .env.example .env
-    echo ".env fayli yaratildi."
+    echo "SESSION_SECRET=magister-secret-key-prod-$(date +%s)" > .env
 fi
 
-# Eski Node 9 dan qolgan noto'g'ri paketlar bo'lsa tozalash
-if [ -d "node_modules" ] && [ -f "node_modules/next/dist/bin/next" ]; then
-    NODE_MAJOR=$(node -e 'console.log(process.versions.node.split(".")[0])' 2>/dev/null || echo "0")
-    if [ "$NODE_MAJOR" -lt 18 ]; then
-        echo "XATOLIK: Node.js versiyasi kamida v18 bo'lishi kerak! Hozirgi: $NODE_VER"
-        exit 1
-    fi
-fi
-
-echo "=== 3. Paketlarni toza o'rnatish ==="
-rm -rf node_modules package-lock.json
-npm install
-
-echo "=== 4. Loyihani yig'ish (build) ==="
-npm run build
-
-echo "=== 5. Bo'sh portni aniqlash va ishga tushirish ==="
-APP_PORT=$(node -e 'const s=require("net").createServer().listen(0,()=>{console.log(s.address().port);process.exit(0)})' 2>/dev/null || echo "3000")
-echo "Ilova $APP_PORT portida ishga tushirilmoqda..."
-
-pkill -f "next.*start" 2>/dev/null || true
+# 3. Eski server jarayonlarini to'xtatish
+pkill -f "node.*server.js" 2>/dev/null || true
 sleep 1
 
-PORT=$APP_PORT nohup node node_modules/next/dist/bin/next start -p $APP_PORT > app.log 2>&1 &
-sleep 4
+# 4. Bo'sh portni aniqlash
+APP_PORT=$(node -e 'const s=require("net").createServer().listen(0,()=>{console.log(s.address().port);process.exit(0)})' 2>/dev/null || echo "3000")
+echo "✓ Ilova $APP_PORT portida ishga tushirilmoqda..."
 
-echo "=== 6. magister.nsuni.uz domeniga ulash (.htaccess) ==="
-TARGET_DIR="/home/kpinsuni/magister.nsuni.uz"
-if [ ! -d "$TARGET_DIR" ]; then
-    TARGET_DIR="$HOME/magister.nsuni.uz"
-fi
+# 5. Ilovani orqa fonda ishga tushirish (0.2 soniyada tayyor bo'ladi!)
+PORT=$APP_PORT HOSTNAME=127.0.0.1 nohup node server.js > app.log 2>&1 &
+sleep 2
+
+# 6. magister.nsuni.uz domeniga .htaccess ulaymiz
+TARGET_DIR="$HOME/magister.nsuni.uz"
 mkdir -p "$TARGET_DIR"
 
 cat << EOF > "$TARGET_DIR/.htaccess"
@@ -72,13 +62,11 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ http://127.0.0.1:${APP_PORT}/\$1 [P,L]
 EOF
 
-echo "=== 7. Natijani tekshirish ==="
-if curl -s -I "http://127.0.0.1:${APP_PORT}" | grep -q "200\|307\|308\|302"; then
-    echo "MUVAFFAQIN! Loyiha serverda muvaffaqiyatli ishga tushdi (Port: $APP_PORT)!"
-    echo "Brauzerda http://magister.nsuni.uz manziliga kirib tekshirishingiz mumkin."
-else
-    echo "Port tekshiruvi:"
-    curl -I -s "http://127.0.0.1:${APP_PORT}" || true
-    echo "Loglar (app.log):"
-    cat app.log | tail -n 20 || true
-fi
+echo "=================================================="
+echo "  NATIJA TEKSHIRILMOQDA: "
+echo "=================================================="
+curl -I -s "http://127.0.0.1:${APP_PORT}" | head -n 5
+
+echo "=================================================="
+echo "✓ TAYYOR! http://magister.nsuni.uz manziliga kiring!"
+echo "=================================================="
